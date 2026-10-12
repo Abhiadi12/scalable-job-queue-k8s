@@ -2,10 +2,11 @@ import { setTimeout as sleep } from "node:timers/promises";
 import type { ConsumeMessage } from "amqplib";
 import { z } from "zod";
 import { env } from "../config/env.js";
-import { JOB_TYPES, REQUEUE_DELAY_MS } from "../constants/index.js";
+import { INVALID_JOB_TYPE_LABEL, JOB_TYPES, REQUEUE_DELAY_MS } from "../constants/index.js";
 import { BaseError } from "../errors/base.error.js";
 import { InvalidMessageError } from "../errors/invalid-message.error.js";
 import type { JobProcessorService } from "../services/job-processor.service.js";
+import type { MetricsService } from "../services/metrics.service.js";
 import type { JobMessage } from "../types/job.js";
 import { logger } from "../utils/logger.js";
 import type { QueueConnection } from "./connection.js";
@@ -23,6 +24,7 @@ export class JobConsumer {
   constructor(
     private readonly queueConnection: QueueConnection,
     private readonly jobProcessor: JobProcessorService,
+    private readonly metrics: MetricsService,
   ) { }
 
   async start(): Promise<void> {
@@ -55,6 +57,7 @@ export class JobConsumer {
     } catch (error) {
       const requeue = !(error instanceof BaseError && error.isPermanent);
       logger.error({ err: error, requeue }, "Could not process message");
+      if (error instanceof InvalidMessageError) this.metrics.recordError(INVALID_JOB_TYPE_LABEL);
       if (requeue) await sleep(REQUEUE_DELAY_MS);
       channel.nack(message, false, requeue);
     }

@@ -6,6 +6,7 @@ import { QueueConnection } from "./queue/connection.js";
 import { JobConsumer } from "./queue/job-consumer.js";
 import { JobProcessorService } from "./services/job-processor.service.js";
 import { JobStoreService } from "./services/job-store.service.js";
+import { MetricsService } from "./services/metrics.service.js";
 import { logger } from "./utils/logger.js";
 
 const redis = new Redis(env.REDIS_URL, {
@@ -15,14 +16,16 @@ redis.on("error", (error: Error) => logger.warn({ err: error }, "Redis error"));
 
 const queueConnection = new QueueConnection();
 
+const metricsService = new MetricsService();
 const jobStoreService = new JobStoreService(redis);
-const jobProcessorService = new JobProcessorService(jobStoreService, jobHandlers);
+const jobProcessorService = new JobProcessorService(jobStoreService, metricsService, jobHandlers);
 
-const jobConsumer = new JobConsumer(queueConnection, jobProcessorService);
+const jobConsumer = new JobConsumer(queueConnection, jobProcessorService, metricsService);
 
 export const container = {
   redis,
   queueConnection,
+  metricsService,
   jobStoreService,
   jobProcessorService,
   jobConsumer,
