@@ -1,4 +1,4 @@
-export const JOB_TYPES = ["primes"] as const;
+export const JOB_TYPES = ["primes", "bcrypt", "sort"] as const;
 
 export const JOB_STATUS = {
   QUEUED: "queued",
