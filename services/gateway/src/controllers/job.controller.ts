@@ -16,7 +16,6 @@ export async function submitJob(
   }
 
   const job = await container.jobService.submit(parsed.data.type, parsed.data.payload);
-  // 202 Accepted: the work is queued, not done.
   res.status(202).json({ success: true, data: job });
 }
 
