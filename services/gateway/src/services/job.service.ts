@@ -27,6 +27,10 @@ export class JobService {
       throw new ServiceUnavailableError("Could not queue job, try again later");
     }
 
+    await this.jobStore
+      .recordSubmitted()
+      .catch((error) => logger.warn({ err: error, jobId: job.id }, "Failed to count submitted job"));
+
     return { id: job.id, status: JOB_STATUS.QUEUED };
   }
 
