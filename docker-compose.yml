@@ -1,13 +1,63 @@
 name: jobq
 
+x-app-env: &app-env
+  NODE_ENV: production
+  RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+  REDIS_URL: redis://redis:6379
+  QUEUE_NAME: jobs
+
+x-app: &app
+  profiles: ["app"]
+  restart: on-failure
+  depends_on:
+    rabbitmq:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
 services:
   rabbitmq:
     image: rabbitmq:4-management-alpine
     ports:
       - "5673:5672"
       - "15673:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   redis:
     image: redis:7-alpine
     ports:
       - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  gateway:
+    <<: *app
+    build: ./services/gateway
+    environment:
+      <<: *app-env
+      PORT: 3000
+    ports:
+      - "3000:3000"
+
+  worker:
+    <<: *app
+    build: ./services/worker
+    environment:
+      <<: *app-env
+      PORT: 4000
+
+  stats:
+    <<: *app
+    build: ./services/stats
+    environment:
+      <<: *app-env
+      PORT: 3001
+    ports:
+      - "3001:3001"
