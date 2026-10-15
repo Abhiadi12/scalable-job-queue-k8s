@@ -10,3 +10,4 @@ resources:
   - apps/gateway.yaml
   - apps/worker.yaml
   - apps/stats.yaml
+  - apps/ingress.yaml
