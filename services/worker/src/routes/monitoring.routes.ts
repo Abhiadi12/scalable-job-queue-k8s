@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { getHealth, getMetrics } from "../controllers/monitoring.controller.js";
+import { getLiveness, getMetrics, getReadiness } from "../controllers/monitoring.controller.js";
 
 export const monitoringRouter = Router();
 
 monitoringRouter.get("/metrics", getMetrics);
-monitoringRouter.get("/healthz", getHealth);
+monitoringRouter.get("/healthz", getLiveness);
+monitoringRouter.get("/readyz", getReadiness);

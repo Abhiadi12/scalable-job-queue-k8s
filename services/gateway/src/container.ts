@@ -5,6 +5,7 @@ import { QueueConnection } from "./queue/connection.js";
 import { JobPublisher } from "./queue/job-publisher.js";
 import { JobStoreService } from "./services/job-store.service.js";
 import { JobService } from "./services/job.service.js";
+import { HealthService } from "./services/health.service.js";
 import { logger } from "./utils/logger.js";
 
 const redis = new Redis(env.REDIS_URL, {
@@ -17,6 +18,7 @@ const jobPublisher = new JobPublisher(queueConnection);
 
 const jobStoreService = new JobStoreService(redis);
 const jobService = new JobService(jobStoreService, jobPublisher);
+const healthService = new HealthService(redis, queueConnection);
 
 export const container = {
   redis,
@@ -24,4 +26,5 @@ export const container = {
   jobPublisher,
   jobStoreService,
   jobService,
+  healthService,
 };
