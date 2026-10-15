@@ -6,6 +6,7 @@ import { JobCountersService } from "./services/job-counters.service.js";
 import { MetricsService } from "./services/metrics.service.js";
 import { QueueStatsService } from "./services/queue-stats.service.js";
 import { StatsService } from "./services/stats.service.js";
+import { HealthService } from "./services/health.service.js";
 import { logger } from "./utils/logger.js";
 
 const redis = new Redis(env.REDIS_URL, {
@@ -19,6 +20,7 @@ const jobCountersService = new JobCountersService(redis);
 const queueStatsService = new QueueStatsService(queueConnection);
 const statsService = new StatsService(jobCountersService, queueStatsService);
 const metricsService = new MetricsService(statsService);
+const healthService = new HealthService(redis, queueConnection);
 
 export const container = {
   redis,
@@ -27,4 +29,5 @@ export const container = {
   queueStatsService,
   statsService,
   metricsService,
+  healthService,
 };
