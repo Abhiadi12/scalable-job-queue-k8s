@@ -9,5 +9,6 @@ resources:
   - infra/redis.yaml
   - apps/gateway.yaml
   - apps/worker.yaml
+  - apps/worker-hpa.yaml
   - apps/stats.yaml
   - apps/ingress.yaml
