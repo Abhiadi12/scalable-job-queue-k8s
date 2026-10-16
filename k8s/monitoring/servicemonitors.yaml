@@ -1,0 +1,35 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: worker
+  namespace: jobq
+  labels:
+    app.kubernetes.io/name: worker
+    app.kubernetes.io/part-of: jobq
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: stats
+  namespace: jobq
+  labels:
+    app.kubernetes.io/name: stats
+    app.kubernetes.io/part-of: jobq
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stats
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s

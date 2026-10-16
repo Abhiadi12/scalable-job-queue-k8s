@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - servicemonitors.yaml
+configMapGenerator:
+  - name: jobq-grafana-dashboard
+    namespace: monitoring
+    files:
+      - dashboards/jobq-overview.json
+    options:
+      disableNameSuffixHash: true
+      labels:
+        grafana_dashboard: "1"
