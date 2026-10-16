@@ -1,5 +1,9 @@
 import { collectDefaultMetrics, Counter, Histogram, Registry } from "prom-client";
-import { JOB_DURATION_BUCKETS_SECONDS } from "../constants/index.js";
+import {
+  INVALID_JOB_TYPE_LABEL,
+  JOB_DURATION_BUCKETS_SECONDS,
+  JOB_TYPES,
+} from "../constants/index.js";
 
 export class MetricsService {
   private readonly registry = new Registry();
@@ -31,6 +35,13 @@ export class MetricsService {
       buckets: JOB_DURATION_BUCKETS_SECONDS,
       registers: [this.registry],
     });
+
+    for (const type of JOB_TYPES) {
+      this.jobsProcessed.inc({ type }, 0);
+      this.jobErrors.inc({ type }, 0);
+      this.jobProcessingTime.zero({ type });
+    }
+    this.jobErrors.inc({ type: INVALID_JOB_TYPE_LABEL }, 0);
   }
 
   recordProcessed(type: string, durationSeconds: number): void {

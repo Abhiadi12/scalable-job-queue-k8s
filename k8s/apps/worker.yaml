@@ -32,7 +32,7 @@ spec:
               memory: 32Mi
       containers:
         - name: worker
-          image: jobq-worker:v2
+          image: jobq-worker:v3
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
