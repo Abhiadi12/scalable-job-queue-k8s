@@ -1,5 +1,11 @@
 import type { Redis } from "ioredis";
-import { JOB_KEY_PREFIX, JOB_STATUS, JOB_TTL_SECONDS } from "../constants/index.js";
+import {
+  JOB_KEY_PREFIX,
+  JOB_STATUS,
+  JOB_TTL_SECONDS,
+  STATS_FIELDS,
+  STATS_KEY,
+} from "../constants/index.js";
 import type { JobMessage, JobRecord, JobStatus, JobType } from "../types/job.js";
 
 const toNumber = (value: string | undefined): number | undefined =>
@@ -44,6 +50,10 @@ export class JobStoreService {
       result: hash.result ? JSON.parse(hash.result) : undefined,
       error: hash.error,
     };
+  }
+
+  async recordSubmitted(): Promise<void> {
+    await this.redis.hincrby(STATS_KEY, STATS_FIELDS.SUBMITTED, 1);
   }
 
   async delete(id: string): Promise<void> {

@@ -30,6 +30,10 @@ export class QueueConnection {
     return this.channel;
   }
 
+  isOpen(): boolean {
+    return this.channel !== null && !this.closing;
+  }
+
   async close(): Promise<void> {
     this.closing = true;
     await this.channel?.close();

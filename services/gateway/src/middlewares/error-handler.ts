@@ -13,7 +13,6 @@ export const notFoundHandler: RequestHandler = (req) => {
 };
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  // express.json() reports a malformed body as a SyntaxError carrying status 400.
   const error =
     err instanceof SyntaxError && "status" in err && err.status === 400
       ? new ValidationError("Malformed JSON body")
