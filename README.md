@@ -164,13 +164,17 @@ kubectl get pods -l app.kubernetes.io/name=worker -w
 
 ### Screenshots
 
-Grafana dashboard during the stress test:
+#### Queue backlog and worker autoscaling
 
-![Dashboard during the stress test](screenshots/grafana-during-load.png)
+![Queue backlog and worker autoscaling](screenshots/grafana-queue-and-scaling.png)
 
-After the backlog drained and workers scaled back down:
+#### Job throughput, processing time and worker CPU
 
-![Dashboard after the stress test](screenshots/grafana-after-load.png)
+![Job throughput, processing time and worker CPU](screenshots/grafana-jobs-and-resources.png)
+
+#### HPA scaling decisions (`kubectl get hpa worker -w`)
+
+![HPA scaling up and down](screenshots/hpa-scaling.png)
 
 ### Observations on scaling
 
